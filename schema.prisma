@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Accounts {
+  id                Int                 @id @default(autoincrement())
+  fullname          String
+  email             String              @unique
+  Role              Roles               @relation(fields: [roleId], references: [id])
+  roleId            Int
+  image             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  Reports           Reports[]
+  Projects          ProjectAssignment[]
+  ReportDiscussions ReportDiscussions[]
+  DailyReports      DailyReports[]
+  TicketRequester   Tickets[]           @relation("Requester")
+  TicketHandler     Tickets[]           @relation("Handler")
+}
+
+model Roles {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  Features    Features[]
+  Accounts    Accounts[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Features {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  Roles       Roles[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Projects {
+  id          Int                 @id @default(autoincrement())
+  title       String
+  description String?             @db.Text
+  image       String?
+  startDate   DateTime
+  endDate     DateTime
+  status      String              @default("pending")
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  Reports     Reports[]
+  Employees   ProjectAssignment[]
+}
+
+model ProjectAssignment {
+  id        Int      @id @default(autoincrement())
+  accountId Int
+  projectId Int
+  Account   Accounts @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  Project   Projects @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, projectId])
+}
+
+model Reports {
+  id                Int                 @id @default(autoincrement())
+  title             String
+  description       String?             @db.Text
+  location          String
+  serialNumber      String
+  projectId         Int
+  Project           Projects            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  accountId         Int
+  Account           Accounts            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  ReportEvidences   ReportEvidences[]
+  ReportDiscussions ReportDiscussions[]
+}
+
+model ReportEvidences {
+  id             Int           @id @default(autoincrement())
+  image          String
+  description    String?
+  reportId       Int
+  Report         Reports       @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  DailyReports   DailyReports? @relation(fields: [dailyReportsId], references: [id])
+  dailyReportsId Int?
+}
+
+model ReportDiscussions {
+  id            Int                 @id @default(autoincrement())
+  content       String
+  reportId      Int
+  Report        Reports             @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  accountId     Int
+  Account       Accounts            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  mainContentId Int?
+  mainContent   ReportDiscussions?  @relation("DiscussionReply", fields: [mainContentId], references: [id], onDelete: Cascade)
+  Replies       ReportDiscussions[] @relation("DiscussionReply")
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model DailyReports {
+  id              Int               @id @default(autoincrement())
+  title           String
+  description     String?           @db.Text
+  accountId       Int
+  Account         Accounts          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  ReportEvidences ReportEvidences[]
+}
+
+model Tickets {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique
+  title       String
+  description String    @db.Text
+  response    String?   @db.Text
+  status      String    @default("sent")
+  requester   Int
+  Requester   Accounts  @relation("Requester", fields: [requester], references: [id], onDelete: Cascade)
+  handler     Int?
+  Handler     Accounts? @relation("Handler", fields: [handler], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

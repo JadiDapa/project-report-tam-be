@@ -1,0 +1,9 @@
+node_modules
+.env
+dist
+coverages
+images
+src/databases/prisma/migrations
+uploads
+.vercel
+.qodo
