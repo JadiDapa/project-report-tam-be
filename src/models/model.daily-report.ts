@@ -34,14 +34,35 @@ export const getDailyReportById = async (id: string) => {
   });
 };
 
-export const createDailyReport = async (data: DailyReports, evidences: any) => {
-  return await prisma.dailyReports.create({
-    data: {
-      ...data,
-      ReportEvidences: {
-        create: evidences
+export const createDailyReport = async (data: DailyReports, evidences: Express.Multer.File[]) => {
+  const { title, description, accountId } = data;
+
+  return await prisma.$transaction(async (tx) => {
+    const report = await tx.dailyReports.create({
+      data: {
+        title,
+        description,
+        accountId: Number(accountId)
       }
+    });
+
+    if (evidences && evidences.length > 0) {
+      const fileUploads = await Promise.all(
+        evidences.map(async (evidence) => {
+          return {
+            image: `${process.env.BASE_URL}/uploads/${evidence.filename}`,
+            description: 'Desc Image',
+            dailyReportsId: report.id
+          };
+        })
+      );
+
+      await tx.reportEvidences.createMany({
+        data: fileUploads
+      });
     }
+
+    return report;
   });
 };
 

@@ -87,8 +87,8 @@ model ReportEvidences {
   id             Int           @id @default(autoincrement())
   image          String
   description    String?
-  reportId       Int
-  Report         Reports       @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  reportId       Int?
+  Report         Reports?      @relation(fields: [reportId], references: [id], onDelete: Cascade)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   DailyReports   DailyReports? @relation(fields: [dailyReportsId], references: [id])
