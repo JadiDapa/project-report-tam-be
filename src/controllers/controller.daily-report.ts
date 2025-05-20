@@ -44,11 +44,15 @@ export const handleGetDailyReportById = async (
   }
 };
 
-export const handleCreateDailyReport = async (req: { body: DailyReports }, res: any) => {
+export const handleCreateDailyReport = async (
+  req: { body: DailyReports; files: Express.Multer.File[] },
+  res: any
+) => {
   try {
     const data = req.body;
+    const evidences = req.files;
 
-    const result = await createDailyReport(data);
+    const result = await createDailyReport(data, evidences);
     return SuccessResponse.DataFound(req, res, 'New Data Created', result);
   } catch (error) {
     return ErrorResponse.InternalServer(req, res, (error as Error).message);

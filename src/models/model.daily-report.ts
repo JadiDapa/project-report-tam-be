@@ -34,9 +34,14 @@ export const getDailyReportById = async (id: string) => {
   });
 };
 
-export const createDailyReport = async (data: DailyReports) => {
+export const createDailyReport = async (data: DailyReports, evidences: any) => {
   return await prisma.dailyReports.create({
-    data: data
+    data: {
+      ...data,
+      ReportEvidences: {
+        create: evidences
+      }
+    }
   });
 };
 

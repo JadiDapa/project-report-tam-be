@@ -5,7 +5,8 @@ export const getAllReports = async () => {
   return await prisma.reports.findMany({
     include: {
       Project: true,
-      Account: true
+      Account: true,
+      ReportEvidences: true
     }
   });
 };
@@ -21,7 +22,8 @@ export const getReportsByReportId = async (id: string) => {
           fullname: true,
           Role: true
         }
-      }
+      },
+      ReportEvidences: true
     }
   });
 };

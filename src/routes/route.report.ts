@@ -14,7 +14,12 @@ const ReportRouter = Router();
 ReportRouter.get('/reports', verifyToken, handleGetAllReports);
 ReportRouter.get('/reports/:reportId', verifyToken, handleGetReportById);
 ReportRouter.post('/reports', verifyToken, upload.array('ReportEvidences'), handleCreateReport);
-ReportRouter.put('/reports/:reportId', verifyToken, handleUpdateReport);
+ReportRouter.put(
+  '/reports/:reportId',
+  verifyToken,
+  upload.array('ReportEvidences'),
+  handleUpdateReport
+);
 ReportRouter.delete('/reports/:reportId', verifyToken, handleDeleteReport);
 
 export default ReportRouter;
