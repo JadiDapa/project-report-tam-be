@@ -56,11 +56,14 @@ export const handleGenerateProjectReport = async (
   }
 
   const reports = await Promise.all(
-    project.Reports.map(async (report, index) => ({
-      index: index + 1,
-      location: report.location,
-      image: `.${new URL(report.ReportEvidences[0].image).pathname}`
-    }))
+    project.Reports.map(async (report, index) => {
+      const evidence = report.ReportEvidences?.[0]; // May be undefined
+      return {
+        index: index + 1,
+        location: report.location,
+        image: evidence?.image ? `.${new URL(evidence.image).pathname}` : null
+      };
+    })
   );
 
   const docData = {

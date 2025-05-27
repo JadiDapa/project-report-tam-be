@@ -66,12 +66,45 @@ export const createDailyReport = async (data: DailyReports, evidences: Express.M
   });
 };
 
-export const updateDailyReport = async (id: string, data: DailyReports) => {
-  return await prisma.dailyReports.update({
-    where: {
-      id: parseInt(id)
-    },
-    data: data
+export const updateDailyReport = async (
+  id: string,
+  data: DailyReports,
+  evidences: Express.Multer.File[]
+) => {
+  const { title, description, accountId } = data;
+
+  return await prisma.$transaction(async (tx) => {
+    const reportId = parseInt(id);
+
+    // 1. Update the report's main fields
+    const updatedReport = await tx.dailyReports.update({
+      where: { id: reportId },
+      data: {
+        title,
+        description,
+        accountId: Number(accountId)
+      }
+    });
+
+    // 2. Delete all existing evidences
+    await tx.reportEvidences.deleteMany({
+      where: { dailyReportsId: reportId }
+    });
+
+    // 3. Add all new evidences
+    if (evidences && evidences.length > 0) {
+      const fileUploads = evidences.map((file) => ({
+        image: `${process.env.BASE_URL}/uploads/${file.filename}`,
+        description: 'Desc Image',
+        dailyReportsId: reportId
+      }));
+
+      await tx.reportEvidences.createMany({
+        data: fileUploads
+      });
+    }
+
+    return updatedReport;
   });
 };
 

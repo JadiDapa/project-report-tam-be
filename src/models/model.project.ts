@@ -68,19 +68,39 @@ export const createProject = async (data: Projects) => {
 };
 
 export const updateProject = async (id: string, data: Projects) => {
-  const { title, description, startDate, endDate, status } = data;
+  const { title, description, startDate, endDate, status, Employees } = data;
 
-  return await prisma.projects.update({
-    where: {
-      id: parseInt(id)
-    },
-    data: {
-      title,
-      description,
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
-      status
+  return await prisma.$transaction(async (tx) => {
+    // 1. Update project main fields
+    const updatedProject = await tx.projects.update({
+      where: { id: parseInt(id) },
+      data: {
+        title,
+        description,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        status
+      }
+    });
+
+    // 2. Delete existing employee assignments
+    await tx.projectAssignment.deleteMany({
+      where: { projectId: parseInt(id) }
+    });
+
+    // 3. Recreate new assignments if there are employees
+    if (Employees && Employees.length > 0) {
+      const assignments = Employees.map((employee) => ({
+        accountId: employee.id,
+        projectId: parseInt(id)
+      }));
+
+      await tx.projectAssignment.createMany({
+        data: assignments
+      });
     }
+
+    return updatedProject;
   });
 };
 

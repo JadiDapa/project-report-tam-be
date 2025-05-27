@@ -60,13 +60,15 @@ export const handleCreateDailyReport = async (
 };
 
 export const handleUpdateDailyReport = async (
-  req: { params: { dailyReportId: string }; body: DailyReports },
+  req: { params: { dailyReportId: string }; body: DailyReports; files: Express.Multer.File[] },
   res: any
 ) => {
   try {
     const dailyReportId = req.params.dailyReportId;
     const data = req.body;
-    const result = await updateDailyReport(dailyReportId, data);
+    const evidences = req.files;
+
+    const result = await updateDailyReport(dailyReportId, data, evidences);
     return SuccessResponse.DataFound(req, res, 'Existing Data Updated', result);
   } catch (error) {
     return ErrorResponse.InternalServer(req, res, (error as Error).message);
