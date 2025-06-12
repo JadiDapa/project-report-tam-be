@@ -1,11 +1,12 @@
 import { DailyReports } from '@prisma/client';
+import { startOfDay, endOfDay } from 'date-fns';
 import prisma from '../lib/prisma';
 
 export const getAllDailyReports = async () => {
   return await prisma.dailyReports.findMany({
     include: {
       Account: true,
-      ReportEvidences: true
+      DailyReportEvidences: true
     }
   });
 };
@@ -17,7 +18,7 @@ export const getDailyReportsByAccountId = async (accountId: string) => {
     },
     include: {
       Account: true,
-      ReportEvidences: true
+      DailyReportEvidences: true
     }
   });
 };
@@ -29,11 +30,28 @@ export const getDailyReportById = async (id: string) => {
     },
     include: {
       Account: true,
-      ReportEvidences: true
+      DailyReportEvidences: true
     }
   });
 };
 
+export const getDailyReportByDate = async (date: string) => {
+  const start = startOfDay(new Date(date));
+  const end = endOfDay(new Date(date));
+
+  return await prisma.dailyReports.findMany({
+    where: {
+      createdAt: {
+        gte: start,
+        lte: end
+      }
+    },
+    include: {
+      Account: true,
+      DailyReportEvidences: true
+    }
+  });
+};
 export const createDailyReport = async (data: DailyReports, evidences: Express.Multer.File[]) => {
   const { title, description, accountId } = data;
 
@@ -57,7 +75,7 @@ export const createDailyReport = async (data: DailyReports, evidences: Express.M
         })
       );
 
-      await tx.reportEvidences.createMany({
+      await tx.dailyReportEvidences.createMany({
         data: fileUploads
       });
     }
@@ -87,7 +105,7 @@ export const updateDailyReport = async (
     });
 
     // 2. Delete all existing evidences
-    await tx.reportEvidences.deleteMany({
+    await tx.dailyReportEvidences.deleteMany({
       where: { dailyReportsId: reportId }
     });
 
@@ -99,7 +117,7 @@ export const updateDailyReport = async (
         dailyReportsId: reportId
       }));
 
-      await tx.reportEvidences.createMany({
+      await tx.dailyReportEvidences.createMany({
         data: fileUploads
       });
     }

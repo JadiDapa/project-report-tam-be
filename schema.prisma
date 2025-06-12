@@ -13,15 +13,19 @@ model Accounts {
   email             String              @unique
   Role              Roles               @relation(fields: [roleId], references: [id])
   roleId            Int
+  phoneNumber       String?
   image             String?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
+  pushToken         String?
   Reports           Reports[]
   Projects          ProjectAssignment[]
   ReportDiscussions ReportDiscussions[]
   DailyReports      DailyReports[]
   TicketRequester   Tickets[]           @relation("Requester")
   TicketHandler     Tickets[]           @relation("Handler")
+  TicketMessages    TicketMessages[]
+  Notifications     Notifications[]
 }
 
 model Roles {
@@ -84,15 +88,13 @@ model Reports {
 }
 
 model ReportEvidences {
-  id             Int           @id @default(autoincrement())
-  image          String
-  description    String?
-  reportId       Int?
-  Report         Reports?      @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  DailyReports   DailyReports? @relation(fields: [dailyReportsId], references: [id])
-  dailyReportsId Int?
+  id          Int      @id @default(autoincrement())
+  image       String
+  description String?
+  reportId    Int
+  Report      Reports  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model ReportDiscussions {
@@ -110,27 +112,69 @@ model ReportDiscussions {
 }
 
 model DailyReports {
-  id              Int               @id @default(autoincrement())
-  title           String
-  description     String?           @db.Text
-  accountId       Int
-  Account         Accounts          @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  ReportEvidences ReportEvidences[]
+  id                   Int                    @id @default(autoincrement())
+  title                String
+  description          String?                @db.Text
+  accountId            Int
+  Account              Accounts               @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  DailyReportEvidences DailyReportEvidences[]
+}
+
+model DailyReportEvidences {
+  id             Int          @id @default(autoincrement())
+  image          String
+  description    String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  DailyReports   DailyReports @relation(fields: [dailyReportsId], references: [id])
+  dailyReportsId Int
 }
 
 model Tickets {
-  id          Int       @id @default(autoincrement())
-  code        String    @unique
+  id             Int              @id @default(autoincrement())
+  code           String           @unique
+  title          String
+  description    String           @db.Text
+  status         String           @default("open")
+  priority       String           @default("normal")
+  requester      Int
+  Requester      Accounts         @relation("Requester", fields: [requester], references: [id], onDelete: Cascade)
+  handler        Int?
+  Handler        Accounts?        @relation("Handler", fields: [handler], references: [id], onDelete: Cascade)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  TicketMessages TicketMessages[]
+}
+
+model TicketMessages {
+  id        Int      @id @default(autoincrement())
+  content   String
+  image     String?
+  ticketId  Int
+  Ticket    Tickets  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  accountId Int
+  Account   Accounts @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notifications {
+  id          Int              @id @default(autoincrement())
+  Account     Accounts         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountId   Int
+  type        NotificationType
   title       String
-  description String    @db.Text
-  response    String?   @db.Text
-  status      String    @default("sent")
-  requester   Int
-  Requester   Accounts  @relation("Requester", fields: [requester], references: [id], onDelete: Cascade)
-  handler     Int?
-  Handler     Accounts? @relation("Handler", fields: [handler], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  description String?
+  link        String?
+  isRead      Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+}
+
+enum NotificationType {
+  PROJECT_ASSIGNED
+  REPORT_APPROVED
+  TICKET_SUBMITTED
+  OTHER
 }

@@ -54,8 +54,6 @@ export const handleUpdateAccount = async (
   res: any
 ) => {
   try {
-    console.log(req.file);
-    console.log(req.body);
     const accountId = req.params.accountId;
     const imageFile = req.file.filename;
     const data = { ...req.body, image: process.env.BASE_URL + '/uploads/' + imageFile };

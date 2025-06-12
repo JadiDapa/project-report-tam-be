@@ -14,6 +14,8 @@ import RoleRouter from './routes/route.role';
 import FeatureRouter from './routes/route.feature';
 import DailyReportRouter from './routes/route.daily-report';
 import TicketRouter from './routes/route.ticket';
+import prisma from './lib/prisma';
+import NotificationRouter from './routes/route.notification';
 
 dotenv.config();
 
@@ -44,14 +46,28 @@ app.use('/api', RoleRouter);
 app.use('/api', FeatureRouter);
 app.use('/api', DailyReportRouter);
 app.use('/api', TicketRouter);
+app.use('/api', NotificationRouter);
 
 // WebSocket Connection
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
-  socket.on('discussion', (message) => {
+  socket.on('send_message', async (message) => {
     console.log('Received message:', message);
-    io.emit('discussion', message);
+
+    // fetch enriched message with Account and Role info
+    const fullMessage = await prisma.ticketMessages.findUnique({
+      where: { id: message.id },
+      include: {
+        Account: {
+          include: {
+            Role: true
+          }
+        }
+      }
+    });
+
+    io.emit('new_message', fullMessage);
   });
 
   socket.on('disconnect', () => {

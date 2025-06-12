@@ -61,6 +61,9 @@ export const handleGenerateProjectReport = async (
       return {
         index: index + 1,
         location: report.location,
+        fullname: report.Account?.fullname || 'Unknown',
+        title: report.title,
+        description: report.description,
         image: evidence?.image ? `.${new URL(evidence.image).pathname}` : null
       };
     })
@@ -68,6 +71,7 @@ export const handleGenerateProjectReport = async (
 
   const docData = {
     projectName: project.title,
+    projectCode: 'PRJ-' + project.id,
     generatedDate: new Date().toLocaleDateString(),
     reports
   };

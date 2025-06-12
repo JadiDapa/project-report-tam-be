@@ -20,7 +20,7 @@ export const getAccountById = async (id: string) => {
       Projects: { include: { Project: true, Account: true } },
       Reports: { include: { Project: true, Account: true } },
       Role: { include: { Features: true } },
-      DailyReports: { include: { Account: true, ReportEvidences: true } },
+      DailyReports: { include: { Account: true, DailyReportEvidences: true } },
       ReportDiscussions: true,
       TicketHandler: true,
       TicketRequester: true
@@ -37,7 +37,7 @@ export const getAccountByEmail = async (email: string) => {
       Projects: { include: { Project: true, Account: true } },
       Reports: { include: { Project: true, Account: true } },
       Role: { include: { Features: true } },
-      DailyReports: { include: { Account: true, ReportEvidences: true } },
+      DailyReports: { include: { Account: true, DailyReportEvidences: true } },
       ReportDiscussions: true,
       TicketHandler: true,
       TicketRequester: true
@@ -53,10 +53,14 @@ export const createAccount = async (data: Accounts) => {
 
 export const updateAccount = async (id: string, data: Accounts) => {
   return await prisma.accounts.update({
-    where: {
-      id: parseInt(id)
-    },
-    data: data
+    where: { id: parseInt(id) },
+    data: {
+      fullname: data.fullname,
+      email: data.email,
+      roleId: Number(data.roleId),
+      image: data.image,
+      phoneNumber: data.phoneNumber
+    }
   });
 };
 

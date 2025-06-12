@@ -5,11 +5,12 @@ import {
   updateTicket,
   deleteTicket,
   getTicketsByHandlerId,
-  getTicketsByRequesterId
+  getTicketsByRequesterId,
+  createTicketMessage
 } from '../models/model.ticket';
 import ErrorResponse from '../helpers/helper.error';
 import SuccessResponse from '../helpers/helper.success';
-import { Tickets } from '@prisma/client';
+import { TicketMessages, Tickets } from '@prisma/client';
 
 export const handleGetAllTickets = async (req: any, res: any) => {
   try {
@@ -61,6 +62,21 @@ export const handleCreateTicket = async (req: { body: Tickets }, res: any) => {
     const data = req.body;
 
     const result = await createTicket(data);
+    return SuccessResponse.DataFound(req, res, 'New Data Created', result);
+  } catch (error) {
+    return ErrorResponse.InternalServer(req, res, (error as Error).message);
+  }
+};
+
+export const handleCreateTicketMessagge = async (
+  req: { params: { ticketId: string }; body: TicketMessages },
+  res: any
+) => {
+  try {
+    const data = req.body;
+    const ticketId = req.params.ticketId;
+
+    const result = await createTicketMessage(ticketId, data);
     return SuccessResponse.DataFound(req, res, 'New Data Created', result);
   } catch (error) {
     return ErrorResponse.InternalServer(req, res, (error as Error).message);

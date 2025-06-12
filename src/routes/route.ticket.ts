@@ -6,7 +6,8 @@ import {
   handleDeleteTicket,
   handleGetTicketById,
   handleGetTicketsByHandlerId,
-  handleGetTicketsByRequesterId
+  handleGetTicketsByRequesterId,
+  handleCreateTicketMessagge
 } from '../controllers/controller.ticket';
 
 const TicketRouter = Router();
@@ -16,6 +17,7 @@ TicketRouter.get('/tickets/requester/:accountId', handleGetTicketsByRequesterId)
 TicketRouter.get('/tickets/handler/:accountId', handleGetTicketsByHandlerId);
 TicketRouter.get('/tickets/:ticketId', handleGetTicketById);
 TicketRouter.post('/tickets', handleCreateTicket);
+TicketRouter.post('/tickets/:ticketId', handleCreateTicketMessagge);
 TicketRouter.put('/tickets/:ticketId', handleUpdateTicket);
 TicketRouter.delete('/tickets/:ticketId', handleDeleteTicket);
 
