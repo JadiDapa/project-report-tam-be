@@ -77,7 +77,11 @@ export const handleGenerateProjectReport = async (
   };
 
   try {
-    const filePath = await generateDoc(docData, project.title);
+    const filePath = await generateDoc(
+      docData,
+      'Project Report ' + project.title,
+      '../../project_report_template.docx'
+    );
 
     if (!filePath) {
       return res.status(500).json({ error: 'Failed to generate document' });

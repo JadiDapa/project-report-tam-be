@@ -39,8 +39,8 @@ export const getTicketsByHandlerId = async (handlerId: string) => {
       handler: parseInt(handlerId)
     },
     include: {
-      Requester: true,
-      Handler: true,
+      Requester: { include: { Role: true } },
+      Handler: { include: { Role: true } },
       TicketMessages: {
         include: {
           Account: { include: { Role: true } }

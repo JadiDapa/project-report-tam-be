@@ -16,6 +16,8 @@ import DailyReportRouter from './routes/route.daily-report';
 import TicketRouter from './routes/route.ticket';
 import prisma from './lib/prisma';
 import NotificationRouter from './routes/route.notification';
+import TaskRouter from './routes/route.task';
+import TaskEvidenceRouter from './routes/route.task-evidence';
 
 dotenv.config();
 
@@ -47,6 +49,8 @@ app.use('/api', FeatureRouter);
 app.use('/api', DailyReportRouter);
 app.use('/api', TicketRouter);
 app.use('/api', NotificationRouter);
+app.use('/api', TaskRouter);
+app.use('/api', TaskEvidenceRouter);
 
 // WebSocket Connection
 io.on('connection', (socket) => {

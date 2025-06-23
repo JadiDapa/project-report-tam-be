@@ -26,6 +26,7 @@ model Accounts {
   TicketHandler     Tickets[]           @relation("Handler")
   TicketMessages    TicketMessages[]
   Notifications     Notifications[]
+  TaskEvidences     TaskEvidences[]
 }
 
 model Roles {
@@ -59,6 +60,7 @@ model Projects {
   updatedAt   DateTime            @updatedAt
   Reports     Reports[]
   Employees   ProjectAssignment[]
+  Tasks       Tasks[]
 }
 
 model ProjectAssignment {
@@ -85,6 +87,37 @@ model Reports {
   updatedAt         DateTime            @updatedAt
   ReportEvidences   ReportEvidences[]
   ReportDiscussions ReportDiscussions[]
+}
+
+model Tasks {
+  id            Int             @id @default(autoincrement())
+  type          String
+  item          String
+  quantity      Int             @default(0)
+  description   String?         @db.Text
+  projectId     Int
+  Project       Projects        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  TaskEvidences TaskEvidences[]
+}
+
+// enum TaskType {
+//   installation
+//   configuration
+//   caintanance
+// }
+
+model TaskEvidences {
+  id          Int       @id @default(autoincrement())
+  image       String?
+  description String?
+  taskId      Int
+  Task        Tasks     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  accountId   Int?
+  Account     Accounts? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model ReportEvidences {
@@ -152,6 +185,7 @@ model TicketMessages {
   id        Int      @id @default(autoincrement())
   content   String
   image     String?
+  type      String?  @default("message")
   ticketId  Int
   Ticket    Tickets  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   accountId Int

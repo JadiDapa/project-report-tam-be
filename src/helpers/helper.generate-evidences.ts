@@ -5,10 +5,10 @@ import Docxtemplater from 'docxtemplater';
 import axios from 'axios';
 const ImageModule = require('docxtemplater-image-module-free');
 
-const generateDoc = (data: any, projectTitle: string) => {
+export default function generateDoc(data: any, projectTitle: string, template: string) {
   try {
     // Load the invoice template
-    const templatePath = path.join(__dirname, '../../project_report_template.docx');
+    const templatePath = path.join(__dirname, template);
     const content = fs.readFileSync(templatePath, 'binary');
 
     let opts: any = {};
@@ -42,7 +42,7 @@ const generateDoc = (data: any, projectTitle: string) => {
 
     const outputPath = path.join(
       __dirname,
-      `../../uploads/evidences/project_report_${projectTitle}_${generatedDate}.docx`
+      `../../uploads/evidences/${projectTitle}_${generatedDate}.docx`
     );
     fs.writeFileSync(outputPath, buffer);
 
@@ -51,9 +51,7 @@ const generateDoc = (data: any, projectTitle: string) => {
     console.error('Error generating document:', error);
     throw error;
   }
-};
-
-export default generateDoc;
+}
 
 async function getImageBase64(url: string) {
   const response = await axios.get(url, { responseType: 'arraybuffer' });

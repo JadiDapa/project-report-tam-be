@@ -35,7 +35,6 @@ export const handleCreateReport = async (
   try {
     const data = req.body;
     const evidences = req.files;
-    console.log('WTF HAPPEN');
 
     const result = await createReport(data, evidences);
     return SuccessResponse.DataFound(req, res, 'New Data Created', result);

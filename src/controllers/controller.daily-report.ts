@@ -77,7 +77,11 @@ export const handleGenerateDailyReport = async (req: { params: { date: string } 
   };
 
   try {
-    const filePath = await generateDoc(docData, 'Daily Report' + format(date, 'dd-MM-yyyy'));
+    const filePath = await generateDoc(
+      docData,
+      'Daily Report' + format(date, 'dd-MM-yyyy'),
+      '../../daily_report_template.docx'
+    );
 
     if (!filePath) {
       return res.status(500).json({ error: 'Failed to generate document' });

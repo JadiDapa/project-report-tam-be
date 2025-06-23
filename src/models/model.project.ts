@@ -5,7 +5,12 @@ export const getAllProjects = async () => {
   return await prisma.projects.findMany({
     include: {
       Employees: true,
-      Reports: true
+      Reports: true,
+      Tasks: {
+        include: {
+          TaskEvidences: true
+        }
+      }
     }
   });
 };
@@ -18,6 +23,15 @@ export const getProjectsByAccountId = async (accountId: string) => {
           accountId: parseInt(accountId)
         }
       }
+    },
+    include: {
+      Employees: true,
+      Reports: true,
+      Tasks: {
+        include: {
+          TaskEvidences: true
+        }
+      }
     }
   });
 };
@@ -28,11 +42,28 @@ export const getProjectById = async (id: string) => {
       id: parseInt(id)
     },
     include: {
-      Employees: { include: { Account: true } },
+      Employees: {
+        include: {
+          Account: {
+            include: {
+              Role: true
+            }
+          }
+        }
+      },
       Reports: {
         include: {
           Account: true,
           ReportEvidences: true
+        }
+      },
+      Tasks: {
+        include: {
+          TaskEvidences: {
+            include: {
+              Account: true
+            }
+          }
         }
       }
     }
