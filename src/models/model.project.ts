@@ -11,6 +11,9 @@ export const getAllProjects = async () => {
           TaskEvidences: true
         }
       }
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };
@@ -32,6 +35,9 @@ export const getProjectsByAccountId = async (accountId: string) => {
           TaskEvidences: true
         }
       }
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };

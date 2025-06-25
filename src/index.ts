@@ -33,8 +33,8 @@ const port = process.env.PORT || 3000;
 
 // Base Middlewares
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: '40mb' }));
+app.use(bodyParser.json({ limit: '40mb' }));
 
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
