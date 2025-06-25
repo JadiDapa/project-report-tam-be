@@ -9,6 +9,7 @@ import {
 import ErrorResponse from '../helpers/helper.error';
 import SuccessResponse from '../helpers/helper.success';
 import { Accounts } from '@prisma/client';
+import * as Clerk from '@clerk/clerk-sdk-node';
 
 export const handleGetAllAccounts = async (req: any, res: any) => {
   try {
@@ -39,13 +40,39 @@ export const handleGetAccountById = async (req: { params: { accountId: string } 
   }
 };
 
-export const handleCreateAccount = async (req: { body: Accounts }, res: any) => {
+// Initialize Clerk Admin SDK
+const clerk = Clerk;
+
+type AccountWithPassword = Accounts & { password: string };
+
+export const handleCreateAccount = async (req: { body: AccountWithPassword }, res: any) => {
   try {
     const data = req.body;
-    const result = await createAccount(data);
-    return SuccessResponse.DataFound(req, res, 'New Data Created', result);
-  } catch (error) {
-    return ErrorResponse.InternalServer(req, res, (error as Error).message);
+
+    const clerkUser = await clerk.users.createUser({
+      emailAddress: [data.email],
+      password: data.password
+    });
+
+    const now = new Date();
+    const result = await createAccount({
+      fullname: data.fullname,
+      email: data.email,
+      roleId: data.roleId,
+      phoneNumber: data.phoneNumber ?? null,
+      image: data.image ?? null,
+      createdAt: now,
+      updatedAt: now,
+      pushToken: data.pushToken ?? null
+    });
+
+    return SuccessResponse.DataFound(req, res, 'New Account Created', {
+      clerkUserId: clerkUser.id,
+      ...result
+    });
+  } catch (error: any) {
+    console.error('Account creation error:', error);
+    return ErrorResponse.InternalServer(req, res, error.message || 'Failed to create account');
   }
 };
 

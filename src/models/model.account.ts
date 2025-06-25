@@ -45,7 +45,7 @@ export const getAccountByEmail = async (email: string) => {
   });
 };
 
-export const createAccount = async (data: Accounts) => {
+export const createAccount = async (data: any) => {
   return await prisma.accounts.create({
     data: data
   });
