@@ -7,6 +7,9 @@ export const getAllDailyReports = async () => {
     include: {
       Account: true,
       DailyReportEvidences: true
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };
@@ -19,6 +22,9 @@ export const getDailyReportsByAccountId = async (accountId: string) => {
     include: {
       Account: true,
       DailyReportEvidences: true
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };
@@ -49,6 +55,9 @@ export const getDailyReportByDate = async (date: string) => {
     include: {
       Account: true,
       DailyReportEvidences: true
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };

@@ -8,25 +8,25 @@ datasource db {
 }
 
 model Accounts {
-  id                Int                 @id @default(autoincrement())
-  fullname          String
-  email             String              @unique
-  Role              Roles               @relation(fields: [roleId], references: [id])
-  roleId            Int
-  phoneNumber       String?
-  image             String?
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  pushToken         String?
-  Reports           Reports[]
-  Projects          ProjectAssignment[]
-  ReportDiscussions ReportDiscussions[]
-  DailyReports      DailyReports[]
-  TicketRequester   Tickets[]           @relation("Requester")
-  TicketHandler     Tickets[]           @relation("Handler")
-  TicketMessages    TicketMessages[]
-  Notifications     Notifications[]
-  TaskEvidences     TaskEvidences[]
+  id                 Int                  @id @default(autoincrement())
+  fullname           String
+  email              String               @unique
+  Role               Roles                @relation(fields: [roleId], references: [id])
+  roleId             Int
+  phoneNumber        String?
+  image              String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  pushToken          String?
+  Reports            Reports[]
+  Projects           ProjectAssignment[]
+  ReportDiscussions  ReportDiscussions[]
+  DailyReports       DailyReports[]
+  TicketRequester    Tickets[]            @relation("Requester")
+  TicketHandler      Tickets[]            @relation("Handler")
+  TicketMessages     TicketMessages[]
+  Notifications      Notifications[]
+  TaskEvidenceImages TaskEvidenceImages[]
 }
 
 model Roles {
@@ -102,22 +102,27 @@ model Tasks {
   TaskEvidences TaskEvidences[]
 }
 
-// enum TaskType {
-//   installation
-//   configuration
-//   caintanance
-// }
-
 model TaskEvidences {
-  id          Int       @id @default(autoincrement())
-  image       String?
-  description String?
-  taskId      Int
-  Task        Tasks     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  accountId   Int?
-  Account     Accounts? @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                 Int                  @id @default(autoincrement())
+  title              String
+  description        String?
+  taskId             Int
+  Task               Tasks                @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  TaskEvidenceImages TaskEvidenceImages[]
+}
+
+model TaskEvidenceImages {
+  id             Int           @id @default(autoincrement())
+  image          String
+  description    String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  TaskEvidence   TaskEvidences @relation(fields: [taskEvidenceId], references: [id])
+  taskEvidenceId Int
+  accountId      Int?
+  Account        Accounts?     @relation(fields: [accountId], references: [id], onDelete: Cascade)
 }
 
 model ReportEvidences {

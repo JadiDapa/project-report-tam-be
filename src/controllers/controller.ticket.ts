@@ -69,14 +69,21 @@ export const handleCreateTicket = async (req: { body: Tickets }, res: any) => {
 };
 
 export const handleCreateTicketMessagge = async (
-  req: { params: { ticketId: string }; body: TicketMessages },
+  req: { params: { ticketId: string }; body: TicketMessages; file?: Express.Multer.File },
   res: any
 ) => {
   try {
-    const data = req.body;
     const ticketId = req.params.ticketId;
 
+    const imageUrl = req.file ? `${process.env.BASE_URL}/uploads/${req.file.filename}` : ''; // or null, depending on your DB model
+
+    const data = {
+      ...req.body,
+      image: imageUrl
+    };
+
     const result = await createTicketMessage(ticketId, data);
+
     return SuccessResponse.DataFound(req, res, 'New Data Created', result);
   } catch (error) {
     return ErrorResponse.InternalServer(req, res, (error as Error).message);

@@ -12,6 +12,9 @@ export const getAllTickets = async () => {
           Account: { include: { Role: true } }
         }
       }
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };
@@ -29,6 +32,9 @@ export const getTicketsByRequesterId = async (requesterId: string) => {
           Account: { include: { Role: true } }
         }
       }
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };
@@ -46,6 +52,9 @@ export const getTicketsByHandlerId = async (handlerId: string) => {
           Account: { include: { Role: true } }
         }
       }
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };
@@ -87,7 +96,13 @@ export const createTicket = async (data: Tickets) => {
 
 export const createTicketMessage = async (id: string, data: TicketMessages) => {
   return await prisma.ticketMessages.create({
-    data: data
+    data: {
+      content: data.content,
+      ticketId: parseInt(id),
+      accountId: Number(data.accountId),
+      image: data.image ? data.image : null,
+      type: data.type
+    }
   });
 };
 

@@ -7,6 +7,9 @@ export const getAllAccounts = async () => {
       Projects: true,
       Reports: true,
       Role: true
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };
@@ -17,7 +20,27 @@ export const getAccountById = async (id: string) => {
       id: parseInt(id)
     },
     include: {
-      Projects: { include: { Project: true, Account: true } },
+      Projects: {
+        include: {
+          Project: {
+            include: {
+              Employees: {
+                include: {
+                  Account: true
+                }
+              },
+              Tasks: {
+                include: {
+                  TaskEvidences: {
+                    include: { TaskEvidenceImages: true }
+                  }
+                }
+              }
+            }
+          },
+          Account: true
+        }
+      },
       Reports: { include: { Project: true, Account: true } },
       Role: { include: { Features: true } },
       DailyReports: { include: { Account: true, DailyReportEvidences: true } },
@@ -34,7 +57,27 @@ export const getAccountByEmail = async (email: string) => {
       email: email
     },
     include: {
-      Projects: { include: { Project: true, Account: true } },
+      Projects: {
+        include: {
+          Project: {
+            include: {
+              Employees: {
+                include: {
+                  Account: true
+                }
+              },
+              Tasks: {
+                include: {
+                  TaskEvidences: {
+                    include: { TaskEvidenceImages: true }
+                  }
+                }
+              }
+            }
+          },
+          Account: true
+        }
+      },
       Reports: { include: { Project: true, Account: true } },
       Role: { include: { Features: true } },
       DailyReports: { include: { Account: true, DailyReportEvidences: true } },

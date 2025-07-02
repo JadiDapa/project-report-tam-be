@@ -2,7 +2,11 @@ import { Notifications } from '@prisma/client';
 import prisma from '../lib/prisma';
 
 export const getAllNotifications = async () => {
-  return await prisma.notifications.findMany({});
+  return await prisma.notifications.findMany({
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
 };
 
 export const getNotificationsByAccountId = async (accountId: string) => {
@@ -12,6 +16,9 @@ export const getNotificationsByAccountId = async (accountId: string) => {
     },
     include: {
       Account: true
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };

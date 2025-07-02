@@ -18,6 +18,7 @@ import prisma from './lib/prisma';
 import NotificationRouter from './routes/route.notification';
 import TaskRouter from './routes/route.task';
 import TaskEvidenceRouter from './routes/route.task-evidence';
+import TaskEvidenceImageRouter from './routes/route.task-evidence-image';
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.use('/api', TicketRouter);
 app.use('/api', NotificationRouter);
 app.use('/api', TaskRouter);
 app.use('/api', TaskEvidenceRouter);
+app.use('/api', TaskEvidenceImageRouter);
 
 // WebSocket Connection
 io.on('connection', (socket) => {

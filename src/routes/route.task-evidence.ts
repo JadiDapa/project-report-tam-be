@@ -15,7 +15,7 @@ TaskEvidenceRouter.get('/task-evidences/:evidenceId', handleGetTaskEvidenceById)
 TaskEvidenceRouter.post('/task-evidences', upload.single('image'), handleCreateTaskEvidence);
 TaskEvidenceRouter.put(
   '/task-evidences/:evidenceId',
-  upload.single('image'),
+  upload.array('TaskEvidenceImages'),
   handleUpdateTaskEvidence
 );
 TaskEvidenceRouter.delete('/task-evidences/:evidenceId', handleDeleteTaskEvidence);

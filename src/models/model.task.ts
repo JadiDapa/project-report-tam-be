@@ -6,6 +6,9 @@ export const getAllTasks = async () => {
     include: {
       Project: true,
       TaskEvidences: true
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };
@@ -16,12 +19,19 @@ export const getTasksByTaskId = async (id: string) => {
       projectId: parseInt(id)
     },
     include: {
-      TaskEvidences: true,
+      TaskEvidences: {
+        include: {
+          TaskEvidenceImages: true
+        }
+      },
       Project: {
         include: {
           Employees: { include: { Account: true } }
         }
       }
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 };
@@ -32,12 +42,16 @@ export const getTaskById = async (id: string) => {
       id: parseInt(id)
     },
     include: {
-      Project: true,
       TaskEvidences: {
         include: {
-          Account: true
+          TaskEvidenceImages: {
+            include: {
+              Account: true
+            }
+          }
         }
-      }
+      },
+      Project: true
     }
   });
 };
@@ -56,7 +70,7 @@ export const createTasks = async (data: Tasks[]) => {
 
       const evidences = Array.from({ length: Number(task.quantity) }).map((_, i) => ({
         taskId: createdTask.id,
-        description: `${createdTask.type} ${createdTask.item} ${i + 1}`
+        title: `${createdTask.type} ${createdTask.item} ${i + 1}`
       }));
 
       await tx.taskEvidences.createMany({
@@ -79,7 +93,7 @@ export const createTask = async (data: Tasks) => {
 
     const evidences = Array.from({ length: Number(data.quantity) }).map((_, i) => ({
       taskId: createdTask.id,
-      description: `${createdTask.type} ${createdTask.item} ${i + 1}`
+      title: `${createdTask.type} ${createdTask.item} ${i + 1}`
     }));
 
     await tx.taskEvidences.createMany({
@@ -92,8 +106,7 @@ export const createTaskEvidence = async (id: string, data: TaskEvidences) => {
   return await prisma.taskEvidences.create({
     data: {
       ...data,
-      taskId: Number(id),
-      accountId: Number(data.accountId)
+      taskId: Number(id)
     }
   });
 };

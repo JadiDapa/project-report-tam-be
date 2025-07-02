@@ -46,13 +46,15 @@ export const handleGenerateTaskEvidence = async (req: { params: { taskId: string
     projectTitle: task.Project.title,
     taskTitle: capitalize(`${task.type} ${task.item} ${task.quantity}`),
     generatedDate: new Date().toLocaleDateString(),
-    te: task.TaskEvidences.map((te, i) => {
+    te: (task.TaskEvidences ?? []).map((te, i) => {
       return {
         index: i + 1,
-        title: capitalize(te.description ?? ''),
-        fullname: te.Account?.fullname || 'No Report Yet',
-        date: te.image ? format(te.updatedAt, 'dd MMMM yyyy') : '-',
-        image: te.image ? `.${new URL(te.image).pathname}` : null
+        title: capitalize(te.title ?? ''),
+        date: te.updatedAt !== te.createdAt ? format(te.updatedAt, 'dd MMMM yyyy') : '-',
+        evidences: te.TaskEvidenceImages.map((image) => ({
+          image: path.resolve('uploads', path.basename(image.image)),
+          account: image.Account?.fullname
+        }))
       };
     })
   };

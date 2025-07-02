@@ -3,6 +3,8 @@ import path from 'path';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import axios from 'axios';
+import { Buffer } from 'buffer';
+import syncRequest from 'sync-request';
 const ImageModule = require('docxtemplater-image-module-free');
 
 export default function generateDoc(data: any, projectTitle: string, template: string) {
@@ -15,7 +17,11 @@ export default function generateDoc(data: any, projectTitle: string, template: s
     opts.centered = true;
     opts.fileType = 'docx';
 
-    opts.getImage = function (tagValue: fs.PathOrFileDescriptor, tagName: any) {
+    opts.getImage = function (tagValue: string) {
+      if (tagValue.startsWith('http')) {
+        const res = syncRequest('GET', tagValue); // 👈 install `sync-request`
+        return res.getBody();
+      }
       return fs.readFileSync(tagValue);
     };
 
