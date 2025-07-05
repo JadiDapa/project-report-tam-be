@@ -19,6 +19,7 @@ import NotificationRouter from './routes/route.notification';
 import TaskRouter from './routes/route.task';
 import TaskEvidenceRouter from './routes/route.task-evidence';
 import TaskEvidenceImageRouter from './routes/route.task-evidence-image';
+import AppSettingRouter from './routes/route.app-setting';
 
 dotenv.config();
 
@@ -53,6 +54,7 @@ app.use('/api', NotificationRouter);
 app.use('/api', TaskRouter);
 app.use('/api', TaskEvidenceRouter);
 app.use('/api', TaskEvidenceImageRouter);
+app.use('/api', AppSettingRouter);
 
 // WebSocket Connection
 io.on('connection', (socket) => {

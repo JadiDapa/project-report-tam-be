@@ -217,3 +217,12 @@ enum NotificationType {
   TICKET_SUBMITTED
   OTHER
 }
+
+model AppSettings {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
