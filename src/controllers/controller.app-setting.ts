@@ -3,7 +3,8 @@ import {
   getAppSettingById,
   createAppSetting,
   updateAppSetting,
-  deleteAppSetting
+  deleteAppSetting,
+  getAppSettingByKey
 } from '../models/model.app-setting';
 import ErrorResponse from '../helpers/helper.error';
 import SuccessResponse from '../helpers/helper.success';
@@ -22,6 +23,19 @@ export const handleGetAppSettingById = async (req: { params: { settingId: string
   try {
     const settingId = req.params.settingId;
     const result = await getAppSettingById(settingId);
+    return SuccessResponse.DataFound(req, res, 'A Data Found', result);
+  } catch (error) {
+    return ErrorResponse.InternalServer(req, res, (error as Error).message);
+  }
+};
+
+export const handleGetAppSettingByKey = async (
+  req: { params: { settingKey: string } },
+  res: any
+) => {
+  try {
+    const settingKey = req.params.settingKey;
+    const result = await getAppSettingByKey(settingKey);
     return SuccessResponse.DataFound(req, res, 'A Data Found', result);
   } catch (error) {
     return ErrorResponse.InternalServer(req, res, (error as Error).message);

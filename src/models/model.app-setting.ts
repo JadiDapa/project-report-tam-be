@@ -13,6 +13,14 @@ export const getAppSettingById = async (id: string) => {
   });
 };
 
+export const getAppSettingByKey = async (key: string) => {
+  return await prisma.appSettings.findUnique({
+    where: {
+      key: key
+    }
+  });
+};
+
 export const createAppSetting = async (data: AppSettings) => {
   return await prisma.appSettings.create({
     data: data
