@@ -28,45 +28,17 @@ export const createTaskEvidence = async (data: TaskEvidences) => {
   });
 };
 
-export const updateTaskEvidence = async (
-  id: string,
-  data: TaskEvidences & { accountId: string },
-  evidences: Express.Multer.File[]
-) => {
-  const { title, description, accountId } = data;
+export const updateTaskEvidence = async (id: string, data: TaskEvidences) => {
+  const { title, description } = data;
 
-  return await prisma.$transaction(async (tx) => {
-    const reportId = parseInt(id);
-
-    // 1. Update the report's main fields
-    const updatedReport = await tx.taskEvidences.update({
-      where: { id: reportId },
-      data: {
-        title,
-        description
-      }
-    });
-
-    // 2. Delete all existing evidences
-    await tx.taskEvidenceImages.deleteMany({
-      where: { taskEvidenceId: reportId }
-    });
-
-    // 3. Add all new evidences
-    if (evidences && evidences.length > 0) {
-      const fileUploads = evidences.map((file) => ({
-        image: `${process.env.BASE_URL}/uploads/${file.filename}`,
-        description: 'Desc Image',
-        taskEvidenceId: reportId,
-        accountId: Number(accountId)
-      }));
-
-      await tx.taskEvidenceImages.createMany({
-        data: fileUploads
-      });
+  return await prisma.taskEvidences.update({
+    where: {
+      id: parseInt(id)
+    },
+    data: {
+      title,
+      description
     }
-
-    return updatedReport;
   });
 };
 

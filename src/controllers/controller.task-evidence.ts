@@ -46,16 +46,14 @@ export const handleUpdateTaskEvidence = async (
   req: {
     params: { evidenceId: string };
     body: TaskEvidences & { accountId: string };
-    files: Express.Multer.File[];
   },
   res: any
 ) => {
   try {
     const evidenceId = req.params.evidenceId;
     const data = req.body;
-    const evidenceImages = req.files;
 
-    const result = await updateTaskEvidence(evidenceId, data, evidenceImages);
+    const result = await updateTaskEvidence(evidenceId, data);
     return SuccessResponse.DataFound(req, res, 'Existing Data Updated', result);
   } catch (error) {
     return ErrorResponse.InternalServer(req, res, (error as Error).message);
