@@ -7,12 +7,18 @@ export const getAllProjects = async () => {
       Employees: true,
       Reports: true,
       Tasks: {
-        include: {
+        select: {
           TaskEvidences: {
-            include: {
-              TaskEvidenceImages: true
+            select: {
+              TaskEvidenceImages: {
+                select: {
+                  id: true
+                }
+              }
             }
-          }
+          },
+          quantity: true,
+          type: true
         }
       }
     },
@@ -35,12 +41,18 @@ export const getProjectsByAccountId = async (accountId: string) => {
       Employees: true,
       Reports: true,
       Tasks: {
-        include: {
+        select: {
           TaskEvidences: {
-            include: {
-              TaskEvidenceImages: true
+            select: {
+              TaskEvidenceImages: {
+                select: {
+                  id: true
+                }
+              }
             }
-          }
+          },
+          quantity: true,
+          type: true
         }
       }
     },
