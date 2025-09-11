@@ -80,7 +80,8 @@ export const createTicket = async (data: Tickets) => {
   const ticket = await prisma.tickets.create({
     data: {
       ...data,
-      code: 'TEMP'
+      code: 'TEMP',
+      requester: Number(data.requester)
     }
   });
 

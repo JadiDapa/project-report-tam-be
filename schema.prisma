@@ -22,7 +22,7 @@ model Accounts {
   Projects           ProjectAssignment[]
   ReportDiscussions  ReportDiscussions[]
   DailyReports       DailyReports[]
-  TicketRequester    Tickets[]            @relation("Requester")
+  TicketRequester    Tickets[]            @relatioan("Requester")
   TicketHandler      Tickets[]            @relation("Handler")
   TicketMessages     TicketMessages[]
   Notifications      Notifications[]
@@ -175,6 +175,7 @@ model Tickets {
   code           String           @unique
   title          String
   description    String           @db.Text
+  image          String?
   status         String           @default("open")
   priority       String           @default("normal")
   requester      Int

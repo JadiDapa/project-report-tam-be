@@ -57,9 +57,17 @@ export const handleGetTicketById = async (req: { params: { ticketId: string } },
   }
 };
 
-export const handleCreateTicket = async (req: { body: Tickets }, res: any) => {
+export const handleCreateTicket = async (
+  req: { body: Tickets; file?: Express.Multer.File },
+  res: any
+) => {
   try {
-    const data = req.body;
+    const imageUrl = req.file ? `${process.env.BASE_URL}/uploads/${req.file.filename}` : '';
+
+    const data = {
+      ...req.body,
+      image: imageUrl
+    };
 
     const result = await createTicket(data);
     return SuccessResponse.DataFound(req, res, 'New Data Created', result);

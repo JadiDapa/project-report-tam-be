@@ -49,25 +49,20 @@ export const handleCreateAccount = async (req: { body: AccountWithPassword }, re
   try {
     const data = req.body;
 
-    const clerkUser = await clerk.users.createUser({
-      emailAddress: [data.email],
-      password: data.password
-    });
+    // const clerkUser = await clerk.users.createUser({
+    //   emailAddress: [data.email],
+    //   password: data.password
+    // });
 
-    const now = new Date();
+    // const now = new Date();
     const result = await createAccount({
       fullname: data.fullname,
       email: data.email,
-      roleId: data.roleId,
-      phoneNumber: data.phoneNumber ?? null,
-      image: data.image ?? null,
-      createdAt: now,
-      updatedAt: now,
-      pushToken: data.pushToken ?? null
+      roleId: data.roleId
     });
 
     return SuccessResponse.DataFound(req, res, 'New Account Created', {
-      clerkUserId: clerkUser.id,
+      // clerkUserId: clerkUser.id,
       ...result
     });
   } catch (error: any) {
