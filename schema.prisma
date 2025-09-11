@@ -22,7 +22,7 @@ model Accounts {
   Projects           ProjectAssignment[]
   ReportDiscussions  ReportDiscussions[]
   DailyReports       DailyReports[]
-  TicketRequester    Tickets[]            @relatioan("Requester")
+  TicketRequester    Tickets[]            @relation("Requester")
   TicketHandler      Tickets[]            @relation("Handler")
   TicketMessages     TicketMessages[]
   Notifications      Notifications[]
