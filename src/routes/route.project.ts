@@ -6,14 +6,15 @@ import {
   handleDeleteProject,
   handleGetProjectById,
   handleGenerateProjectReport,
-  handleGetProjectsByAccountId
+  handleGetProjectsByAccountId,
+  handleGetProjectsByProgramId
 } from '../controllers/controller.project';
-import { requireAuth } from '@clerk/express';
 
 const ProjectRouter = Router();
 
 // Apply requireAuth() to all routes that need to be protected
 ProjectRouter.get('/projects', handleGetAllProjects);
+ProjectRouter.get('/projects/program/:programId', handleGetProjectsByProgramId);
 ProjectRouter.get('/projects/account/:accountId', handleGetProjectsByAccountId);
 ProjectRouter.get('/projects/:projectId', handleGetProjectById);
 ProjectRouter.get(

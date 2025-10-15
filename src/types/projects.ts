@@ -13,4 +13,5 @@ export interface Projects {
   updatedAt: Date;
   Reports: Reports[];
   Employees: ProjectAssignments[];
+  programId: number;
 }

@@ -1,8 +1,40 @@
+import { Projects } from '@prisma/client';
 import prisma from '../lib/prisma';
-import { Projects } from '../types/projects';
+
+type ProjectWithEmployees = Projects & { Employees?: { id: number }[] };
 
 export const getAllProjects = async () => {
   return await prisma.projects.findMany({
+    include: {
+      Employees: true,
+      Reports: true,
+      Tasks: {
+        select: {
+          TaskEvidences: {
+            select: {
+              TaskEvidenceImages: {
+                select: {
+                  id: true
+                }
+              }
+            }
+          },
+          quantity: true,
+          type: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
+};
+
+export const getProjectsByProgramId = async (programId: string) => {
+  return await prisma.projects.findMany({
+    where: {
+      programId: parseInt(programId)
+    },
     include: {
       Employees: true,
       Reports: true,
@@ -96,8 +128,8 @@ export const getProjectById = async (id: string) => {
   });
 };
 
-export const createProject = async (data: Projects) => {
-  const { title, description, startDate, endDate, status, Employees } = data;
+export const createProject = async (data: ProjectWithEmployees) => {
+  const { title, description, startDate, endDate, status, Employees, programId } = data;
   return await prisma.$transaction(async (tx) => {
     const project = await tx.projects.create({
       data: {
@@ -105,7 +137,8 @@ export const createProject = async (data: Projects) => {
         description,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
-        status
+        status,
+        programId
       }
     });
 
@@ -124,7 +157,7 @@ export const createProject = async (data: Projects) => {
   });
 };
 
-export const updateProject = async (id: string, data: Projects) => {
+export const updateProject = async (id: string, data: ProjectWithEmployees) => {
   const { title, description, startDate, endDate, status, Employees } = data;
 
   return await prisma.$transaction(async (tx) => {

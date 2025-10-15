@@ -20,6 +20,7 @@ import TaskRouter from './routes/route.task';
 import TaskEvidenceRouter from './routes/route.task-evidence';
 import TaskEvidenceImageRouter from './routes/route.task-evidence-image';
 import AppSettingRouter from './routes/route.app-setting';
+import ProgramRouter from './routes/route.program';
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ app.use('/uploads', express.static('uploads'));
 // Routes
 app.use('/api', AccountRouter);
 app.use('/api', ProjectRouter);
+app.use('/api', ProgramRouter);
 app.use('/api', ReportRouter);
 app.use('/api', ReportDiscussionRouter);
 app.use('/api', RoleRouter);

@@ -4,18 +4,32 @@ import {
   createProject,
   updateProject,
   deleteProject,
-  getProjectsByAccountId
+  getProjectsByAccountId,
+  getProjectsByProgramId
 } from '../models/model.project';
 import ErrorResponse from '../helpers/helper.error';
 import SuccessResponse from '../helpers/helper.success';
-import { Projects } from '../types/projects';
 import generateDoc from '../helpers/helper.generate-evidences';
 import path from 'path';
+import { Projects } from '@prisma/client';
 
 export const handleGetAllProjects = async (req: any, res: any) => {
   try {
     const result = await getAllProjects();
     return SuccessResponse.DataFound(req, res, 'All Data Found', result);
+  } catch (error) {
+    return ErrorResponse.InternalServer(req, res, (error as Error).message);
+  }
+};
+
+export const handleGetProjectsByProgramId = async (
+  req: { params: { programId: string } },
+  res: any
+) => {
+  try {
+    const programId = req.params.programId;
+    const result = await getProjectsByProgramId(programId);
+    return SuccessResponse.DataFound(req, res, 'A Data Found', result);
   } catch (error) {
     return ErrorResponse.InternalServer(req, res, (error as Error).message);
   }
@@ -33,6 +47,7 @@ export const handleGetProjectsByAccountId = async (
     return ErrorResponse.InternalServer(req, res, (error as Error).message);
   }
 };
+
 export const handleGetProjectById = async (req: { params: { projectId: string } }, res: any) => {
   try {
     const projectId = req.params.projectId;
