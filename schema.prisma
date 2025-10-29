@@ -60,6 +60,16 @@ model Programs {
   updatedAt   DateTime   @updatedAt
 }
 
+model ProgramAssignment {
+  id        Int      @id @default(autoincrement())
+  accountId Int
+  programId Int
+  Account   Accounts @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  Program   Programs @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, programId])
+}
+
 model Projects {
   id          Int                 @id @default(autoincrement())
   title       String

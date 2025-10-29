@@ -4,7 +4,8 @@ import prisma from '../lib/prisma';
 export const getAllPrograms = async () => {
   return await prisma.programs.findMany({
     include: {
-      Projects: true
+      Projects: true,
+      Accounts: true
     },
     orderBy: {
       createdAt: 'desc'
@@ -15,7 +16,7 @@ export const getAllPrograms = async () => {
 // export const getProgramsByAccountId = async (accountId: string) => {
 //   return await prisma.programs.findMany({
 //     where: {
-//       Employees: {
+//       Accounts: {
 //         some: {
 //           accountId: parseInt(accountId)
 //         }
@@ -36,16 +37,37 @@ export const getProgramById = async (id: string) => {
       id: parseInt(id)
     },
     include: {
-      Projects: true
+      Projects: true,
+      Accounts: true
     }
   });
 };
 
-export const createProgram = async (data: Programs) => {
-  return await prisma.programs.create({
-    data: {
-      ...data
+type ProgramWithAccounts = Programs & { Accounts?: { id: number }[] };
+
+export const createProgram = async (data: ProgramWithAccounts) => {
+  const { title, description, status, Accounts } = data;
+  return await prisma.$transaction(async (tx) => {
+    const project = await tx.programs.create({
+      data: {
+        title,
+        description,
+        status
+      }
+    });
+
+    if (Accounts && Accounts.length > 0) {
+      const assignments = Accounts.map((employee) => ({
+        accountId: employee.id,
+        projectId: project.id
+      }));
+
+      await tx.projectAssignment.createMany({
+        data: assignments
+      });
     }
+
+    return project;
   });
 };
 
