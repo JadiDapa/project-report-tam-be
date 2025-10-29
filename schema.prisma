@@ -28,6 +28,7 @@ model Accounts {
   TicketMessages     TicketMessages[]
   Notifications      Notifications[]
   TaskEvidenceImages TaskEvidenceImages[]
+  ProgramAssignment  ProgramAssignment[]
 }
 
 model Roles {
@@ -50,14 +51,15 @@ model Features {
 }
 
 model Programs {
-  id          Int        @id @default(autoincrement())
-  title       String     @unique
-  description String?
-  status      String     @default("active")
-  Projects    Projects[]
-  Accounts    Accounts[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id                Int                 @id @default(autoincrement())
+  title             String              @unique
+  description       String?
+  status            String              @default("active")
+  Projects          Projects[]
+  Accounts          Accounts[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  ProgramAssignment ProgramAssignment[]
 }
 
 model ProgramAssignment {
