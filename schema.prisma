@@ -20,6 +20,7 @@ model Accounts {
   pushToken          String?
   Reports            Reports[]
   Projects           ProjectAssignment[]
+  Programs           Programs[]
   ReportDiscussions  ReportDiscussions[]
   DailyReports       DailyReports[]
   TicketRequester    Tickets[]            @relation("Requester")
@@ -54,6 +55,8 @@ model Programs {
   description String?
   status      String     @default("active")
   Projects    Projects[]
+  accountId   Int
+  Account     Accounts   @relation(fields: [accountId], references: [id])
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }

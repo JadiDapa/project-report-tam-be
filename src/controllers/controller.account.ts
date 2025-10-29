@@ -49,10 +49,10 @@ export const handleCreateAccount = async (req: { body: AccountWithPassword }, re
   try {
     const data = req.body;
 
-    // const clerkUser = await clerk.users.createUser({
-    //   emailAddress: [data.email],
-    //   password: data.password
-    // });
+    const clerkUser = await clerk.users.createUser({
+      emailAddress: [data.email],
+      password: data.password
+    });
 
     // const now = new Date();
     const result = await createAccount({
