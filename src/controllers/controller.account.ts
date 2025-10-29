@@ -62,7 +62,7 @@ export const handleCreateAccount = async (req: { body: AccountWithPassword }, re
     });
 
     return SuccessResponse.DataFound(req, res, 'New Account Created', {
-      // clerkUserId: clerkUser.id,
+      clerkUserId: clerkUser.id,
       ...result
     });
   } catch (error: any) {

@@ -55,8 +55,7 @@ model Programs {
   description String?
   status      String     @default("active")
   Projects    Projects[]
-  accountId   Int
-  Account     Accounts   @relation(fields: [accountId], references: [id])
+  Accounts    Accounts[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
