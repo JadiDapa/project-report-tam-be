@@ -7,8 +7,6 @@ import {
 } from '../models/model.program';
 import ErrorResponse from '../helpers/helper.error';
 import SuccessResponse from '../helpers/helper.success';
-import generateDoc from '../helpers/helper.generate-evidences';
-import path from 'path';
 import { Programs } from '@prisma/client';
 
 export const handleGetAllPrograms = async (req: any, res: any) => {

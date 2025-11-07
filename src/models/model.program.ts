@@ -38,7 +38,9 @@ export const getProgramById = async (id: string) => {
       Projects: true,
       ProgramAssignment: {
         include: {
-          Account: true // 👈 this pulls in each related account
+          Account: {
+            include: { Role: true }
+          }
         }
       }
     }
@@ -50,7 +52,7 @@ type ProgramWithAccounts = Programs & { Accounts?: { id: number }[] };
 export const createProgram = async (data: ProgramWithAccounts) => {
   const { title, description, status, Accounts } = data;
   return await prisma.$transaction(async (tx) => {
-    const project = await tx.programs.create({
+    const program = await tx.programs.create({
       data: {
         title,
         description,
@@ -61,24 +63,50 @@ export const createProgram = async (data: ProgramWithAccounts) => {
     if (Accounts && Accounts.length > 0) {
       const assignments = Accounts.map((employee) => ({
         accountId: employee.id,
-        projectId: project.id
+        programId: program.id
       }));
 
-      await tx.projectAssignment.createMany({
+      await tx.programAssignment.createMany({
         data: assignments
       });
     }
 
-    return project;
+    return program;
   });
 };
 
-export const updateProgram = async (id: string, data: Programs) => {
-  return await prisma.programs.update({
-    where: { id: parseInt(id) },
-    data: {
-      ...data
+export const updateProgram = async (id: string, data: ProgramWithAccounts) => {
+  const { title, description, status, Accounts } = data;
+
+  return await prisma.$transaction(async (tx) => {
+    // 1. Update project main fields
+    const updatedProject = await tx.projects.update({
+      where: { id: parseInt(id) },
+      data: {
+        title,
+        description,
+        status
+      }
+    });
+
+    // 2. Delete existing employee assignments
+    await tx.programAssignment.deleteMany({
+      where: { programId: parseInt(id) }
+    });
+
+    // 3. Recreate new assignments if there are employees
+    if (Accounts && Accounts.length > 0) {
+      const assignments = Accounts.map((employee) => ({
+        accountId: employee.id,
+        programId: parseInt(id)
+      }));
+
+      await tx.programAssignment.createMany({
+        data: assignments
+      });
     }
+
+    return updatedProject;
   });
 };
 
