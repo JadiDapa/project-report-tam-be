@@ -36,7 +36,7 @@ export const getProgramById = async (id: string) => {
     where: { id: parseInt(id) },
     include: {
       Projects: true,
-      ProgramAssignment: {
+      Accounts: {
         include: {
           Account: {
             include: { Role: true }
