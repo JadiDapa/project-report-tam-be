@@ -20,7 +20,6 @@ model Accounts {
   pushToken          String?
   Reports            Reports[]
   Projects           ProjectAssignment[]
-  Programs           Programs[]
   ReportDiscussions  ReportDiscussions[]
   DailyReports       DailyReports[]
   TicketRequester    Tickets[]            @relation("Requester")
