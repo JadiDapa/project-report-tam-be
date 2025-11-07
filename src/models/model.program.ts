@@ -33,12 +33,14 @@ export const getAllPrograms = async () => {
 
 export const getProgramById = async (id: string) => {
   return await prisma.programs.findUnique({
-    where: {
-      id: parseInt(id)
-    },
+    where: { id: parseInt(id) },
     include: {
       Projects: true,
-      Accounts: true
+      ProgramAssignment: {
+        include: {
+          Account: true // 👈 this pulls in each related account
+        }
+      }
     }
   });
 };
