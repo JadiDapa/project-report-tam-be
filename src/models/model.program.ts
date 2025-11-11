@@ -97,7 +97,7 @@ export const updateProgram = async (id: string, data: ProgramWithAccounts) => {
     // 3. Recreate new assignments if there are employees
     if (Accounts && Accounts.length > 0) {
       const assignments = Accounts.map((employee) => ({
-        accountId: employee.id,
+        accountId: Number(employee.id),
         programId: parseInt(id)
       }));
 
