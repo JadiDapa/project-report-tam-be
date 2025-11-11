@@ -80,7 +80,7 @@ export const updateProgram = async (id: string, data: ProgramWithAccounts) => {
 
   return await prisma.$transaction(async (tx) => {
     // 1. Update project main fields
-    const updatedProject = await tx.projects.update({
+    const updatedProject = await tx.programs.update({
       where: { id: parseInt(id) },
       data: {
         title,
