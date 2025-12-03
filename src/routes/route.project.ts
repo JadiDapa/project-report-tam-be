@@ -18,7 +18,7 @@ ProjectRouter.get('/projects/program/:programId', handleGetProjectsByProgramId);
 ProjectRouter.get('/projects/account/:accountId', handleGetProjectsByAccountId);
 ProjectRouter.get('/projects/:projectId', handleGetProjectById);
 ProjectRouter.get(
-  '/projects/generate-report/:projectId',
+  '/projects/generate-evidence/:projectId',
 
   handleGenerateProjectReport
 );

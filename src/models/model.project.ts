@@ -119,7 +119,9 @@ export const getProjectById = async (id: string) => {
         include: {
           TaskEvidences: {
             include: {
-              TaskEvidenceImages: true
+              TaskEvidenceImages: {
+                include: { Account: true }
+              }
             }
           }
         }
@@ -127,6 +129,8 @@ export const getProjectById = async (id: string) => {
     }
   });
 };
+
+const Project = [{ Task: [{ TaskEvidence: [{ TaskEvidenceImage: [] }] }] }];
 
 export const createProject = async (data: ProjectWithEmployees) => {
   const { title, description, startDate, endDate, status, Employees, programId } = data;

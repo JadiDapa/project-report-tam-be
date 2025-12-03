@@ -12,6 +12,8 @@ import SuccessResponse from '../helpers/helper.success';
 import generateDoc from '../helpers/helper.generate-evidences';
 import path from 'path';
 import { Projects } from '@prisma/client';
+import { format } from 'date-fns';
+import { capitalize } from './controller.task';
 
 export const handleGetAllProjects = async (req: any, res: any) => {
   try {
@@ -70,39 +72,38 @@ export const handleGenerateProjectReport = async (
     return res.status(404).json({ error: 'Project not found' });
   }
 
-  const reports = await Promise.all(
-    project.Reports.map(async (report, index) => {
-      const evidence = report.ReportEvidences?.[0]; // May be undefined
-      return {
-        index: index + 1,
-        location: report.location,
-        fullname: report.Account?.fullname || 'Unknown',
-        title: report.title,
-        description: report.description,
-        image: evidence?.image ? `.${new URL(evidence.image).pathname}` : null
-      };
-    })
-  );
-
   const docData = {
-    projectName: project.title,
-    projectCode: 'PRJ-' + project.id,
-    generatedDate: new Date().toLocaleDateString(),
-    reports
+    projectTitle: project.title,
+    tasks: project.Tasks.map((task, taskIndex) => ({
+      index: taskIndex + 1,
+      title: `${task.type} ${task.item} ${task.quantity}`,
+      date: task.updatedAt ? format(task.updatedAt, 'dd MMMM yyyy') : '-',
+      te: (task.TaskEvidences ?? []).map((te, i) => {
+        return {
+          index: i + 1,
+          title: capitalize(te.title ?? ''),
+          date: te.updatedAt !== te.createdAt ? format(te.updatedAt, 'dd MMMM yyyy') : '-',
+          evidences: te.TaskEvidenceImages.map((image) => ({
+            image: path.resolve('uploads', path.basename(image.image)),
+            account: image.Account?.fullname
+          }))
+        };
+      })
+    }))
   };
 
   try {
     const filePath = await generateDoc(
       docData,
       'Project Report ' + project.title,
-      '../../project_report_template.docx'
+      '../../project-template.docx'
     );
 
     if (!filePath) {
       return res.status(500).json({ error: 'Failed to generate document' });
     }
 
-    res.download(filePath, 'report.docx');
+    res.download(filePath, 'project-report.docx');
     return SuccessResponse.DataFound(
       req,
       res,

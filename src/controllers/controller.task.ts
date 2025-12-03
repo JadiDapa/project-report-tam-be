@@ -145,5 +145,5 @@ export const handleDeleteTask = async (req: { params: { taskId: string } }, res:
   }
 };
 
-const capitalize = (str: string) =>
+export const capitalize = (str: string) =>
   str.replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
