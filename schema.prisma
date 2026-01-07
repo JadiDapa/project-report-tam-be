@@ -140,6 +140,7 @@ model TaskEvidences {
 model TaskEvidenceImages {
   id             Int           @id @default(autoincrement())
   image          String
+  isExport       Boolean       @default(false)
   description    String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt

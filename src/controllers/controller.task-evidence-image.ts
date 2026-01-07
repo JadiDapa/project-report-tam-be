@@ -8,6 +8,8 @@ import {
 import ErrorResponse from '../helpers/helper.error';
 import SuccessResponse from '../helpers/helper.success';
 import { TaskEvidenceImages } from '@prisma/client';
+import path from 'path';
+import { compressImage } from '../helpers/helper.compress-image';
 
 export const handleGetAllTaskEvidenceImages = async (req: any, res: any) => {
   try {
@@ -36,8 +38,15 @@ export const handleCreateTaskEvidenceImage = async (
   res: any
 ) => {
   try {
-    const image = req.file.filename;
-    const data = { ...req.body, image: `${process.env.BASE_URL}/uploads/${image}` };
+    const originalPath = req.file.path;
+
+    const compressedFilename = path.parse(req.file.filename).name + '.jpg';
+
+    const compressedPath = await compressImage(originalPath, compressedFilename);
+    const data = {
+      ...req.body,
+      image: process.env.BASE_URL + '/uploads/images/' + compressedFilename
+    };
 
     const result = await createTaskEvidenceImage(data);
     return SuccessResponse.DataFound(req, res, 'New Data Created', result);
@@ -50,14 +59,12 @@ export const handleUpdateTaskEvidenceImage = async (
   req: {
     params: { evidenceId: string };
     body: TaskEvidenceImages & { accountId: string };
-    file: Express.Multer.File;
   },
   res: any
 ) => {
   try {
     const evidenceId = req.params.evidenceId;
-    const image = req.file.filename;
-    const data = { ...req.body, image: `${process.env.BASE_URL}/uploads/${image}` };
+    const data = { ...req.body };
 
     const result = await updateTaskEvidenceImage(evidenceId, data);
     return SuccessResponse.DataFound(req, res, 'Existing Data Updated', result);

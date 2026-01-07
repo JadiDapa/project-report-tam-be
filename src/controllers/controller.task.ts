@@ -13,6 +13,7 @@ import { TaskEvidences, Tasks } from '@prisma/client';
 import generateDoc from '../helpers/helper.generate-evidences';
 import path from 'path';
 import { format } from 'date-fns';
+import { compressImage } from '../helpers/helper.compress-image';
 
 export const handleGetAllTasks = async (req: any, res: any) => {
   try {
@@ -47,11 +48,13 @@ export const handleGenerateTaskEvidence = async (req: { params: { taskId: string
     taskTitle: capitalize(`${task.type} ${task.item} ${task.quantity}`),
     generatedDate: new Date().toLocaleDateString(),
     te: (task.TaskEvidences ?? []).map((te, i) => {
+      const exportedImages = te.TaskEvidenceImages.filter((image) => image.isExport === true);
+
       return {
         index: i + 1,
         title: capitalize(te.title ?? ''),
         date: te.updatedAt !== te.createdAt ? format(te.updatedAt, 'dd MMMM yyyy') : '-',
-        evidences: te.TaskEvidenceImages.map((image) => ({
+        evidences: exportedImages.map((image) => ({
           image: path.resolve('uploads', path.basename(image.image)),
           account: image.Account?.fullname
         }))
@@ -109,10 +112,17 @@ export const handleCreateTaskEvidence = async (
   res: any
 ) => {
   try {
-    const imageFile = req.file.filename;
     const taskId = req.params.taskId;
+    const originalPath = req.file.path;
 
-    const data = { ...req.body, image: process.env.BASE_URL + '/uploads/' + imageFile };
+    const compressedFilename = path.parse(req.file.filename).name + '.jpg';
+
+    const compressedPath = await compressImage(originalPath, compressedFilename);
+
+    const data = {
+      ...req.body,
+      image: process.env.BASE_URL + '/uploads/images/' + compressedFilename
+    };
 
     const result = await createTaskEvidence(taskId, data);
     return SuccessResponse.DataFound(req, res, 'New Data Created', result);

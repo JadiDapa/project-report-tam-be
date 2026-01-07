@@ -17,11 +17,7 @@ TaskEvidenceImageRouter.post(
   upload.single('image'),
   handleCreateTaskEvidenceImage
 );
-TaskEvidenceImageRouter.put(
-  '/task-evidence-images/:evidenceId',
-  upload.single('image'),
-  handleUpdateTaskEvidenceImage
-);
+TaskEvidenceImageRouter.put('/task-evidence-images/:evidenceId', handleUpdateTaskEvidenceImage);
 TaskEvidenceImageRouter.delete('/task-evidence-images/:evidenceId', handleDeleteTaskEvidenceImage);
 
 export default TaskEvidenceImageRouter;

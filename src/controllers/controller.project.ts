@@ -78,17 +78,17 @@ export const handleGenerateProjectReport = async (
       index: taskIndex + 1,
       title: `${task.type} ${task.item} ${task.quantity}`,
       date: task.updatedAt ? format(task.updatedAt, 'dd MMMM yyyy') : '-',
-      te: (task.TaskEvidences ?? []).map((te, i) => {
-        return {
-          index: i + 1,
-          title: capitalize(te.title ?? ''),
-          date: te.updatedAt !== te.createdAt ? format(te.updatedAt, 'dd MMMM yyyy') : '-',
-          evidences: te.TaskEvidenceImages.map((image) => ({
+      te: (task.TaskEvidences ?? []).map((te, i) => ({
+        index: i + 1,
+        title: capitalize(te.title ?? ''),
+        date: te.updatedAt !== te.createdAt ? format(te.updatedAt, 'dd MMMM yyyy') : '-',
+        evidences: te.TaskEvidenceImages.filter((image) => image.isExport === true).map(
+          (image) => ({
             image: path.resolve('uploads', path.basename(image.image)),
             account: image.Account?.fullname
-          }))
-        };
-      })
+          })
+        )
+      }))
     }))
   };
 

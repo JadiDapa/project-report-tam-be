@@ -41,12 +41,7 @@ export const updateTaskEvidenceImage = async (id: string, data: TaskEvidenceImag
     where: {
       id: parseInt(id)
     },
-    data: {
-      image: data.image,
-      description: data.description,
-      taskEvidenceId: Number(data.taskEvidenceId),
-      accountId: Number(data.accountId)
-    }
+    data: data
   });
 };
 

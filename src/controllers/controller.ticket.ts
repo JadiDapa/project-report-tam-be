@@ -11,6 +11,8 @@ import {
 import ErrorResponse from '../helpers/helper.error';
 import SuccessResponse from '../helpers/helper.success';
 import { TicketMessages, Tickets } from '@prisma/client';
+import path from 'path';
+import { compressImage } from '../helpers/helper.compress-image';
 
 export const handleGetAllTickets = async (req: any, res: any) => {
   try {
@@ -58,15 +60,19 @@ export const handleGetTicketById = async (req: { params: { ticketId: string } },
 };
 
 export const handleCreateTicket = async (
-  req: { body: Tickets; file?: Express.Multer.File },
+  req: { body: Tickets; file: Express.Multer.File },
   res: any
 ) => {
   try {
-    const imageUrl = req.file ? `${process.env.BASE_URL}/uploads/${req.file.filename}` : '';
+    const originalPath = req.file.path;
+
+    const compressedFilename = path.parse(req.file.filename).name + '.jpg';
+
+    const compressedPath = await compressImage(originalPath, compressedFilename);
 
     const data = {
       ...req.body,
-      image: imageUrl
+      image: process.env.BASE_URL + '/uploads/images/' + compressedFilename
     };
 
     const result = await createTicket(data);
