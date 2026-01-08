@@ -139,9 +139,13 @@ model TaskEvidences {
 
 model TaskEvidenceImages {
   id             Int           @id @default(autoincrement())
+  baseImage      String?
   image          String
   isExport       Boolean       @default(false)
   description    String?
+  date           DateTime?
+  latitude       Int?
+  longitude      Int?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   TaskEvidence   TaskEvidences @relation(fields: [taskEvidenceId], references: [id])

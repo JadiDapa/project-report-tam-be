@@ -14,10 +14,18 @@ TaskEvidenceImageRouter.get('/task-evidence-images', handleGetAllTaskEvidenceIma
 TaskEvidenceImageRouter.get('/task-evidence-images/:evidenceId', handleGetTaskEvidenceImageById);
 TaskEvidenceImageRouter.post(
   '/task-evidence-images',
-  upload.single('image'),
+  upload.fields([
+    { name: 'image', maxCount: 1 }, // overlay image
+    { name: 'baseImage', maxCount: 1 } // original image
+  ]),
   handleCreateTaskEvidenceImage
 );
-TaskEvidenceImageRouter.put('/task-evidence-images/:evidenceId', handleUpdateTaskEvidenceImage);
+TaskEvidenceImageRouter.put(
+  '/task-evidence-images/:evidenceId',
+  upload.fields([{ name: 'image', maxCount: 1 }]),
+  handleUpdateTaskEvidenceImage
+);
+
 TaskEvidenceImageRouter.delete('/task-evidence-images/:evidenceId', handleDeleteTaskEvidenceImage);
 
 export default TaskEvidenceImageRouter;
