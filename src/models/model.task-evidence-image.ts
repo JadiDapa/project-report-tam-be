@@ -41,6 +41,7 @@ export const createTaskEvidenceImage = async (data: TaskEvidenceImages) => {
 };
 
 export const updateTaskEvidenceImage = async (id: string, data: Partial<TaskEvidenceImages>) => {
+  console.log(data);
   return await prisma.taskEvidenceImages.update({
     where: {
       id: parseInt(id)
@@ -50,7 +51,8 @@ export const updateTaskEvidenceImage = async (id: string, data: Partial<TaskEvid
       date: data.date,
       latitude: data.latitude,
       longitude: data.longitude,
-      description: data.description
+      description: data.description,
+      isExport: data.isExport
     }
   });
 };
