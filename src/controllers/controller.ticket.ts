@@ -83,17 +83,30 @@ export const handleCreateTicket = async (
 };
 
 export const handleCreateTicketMessagge = async (
-  req: { params: { ticketId: string }; body: TicketMessages; file?: Express.Multer.File },
+  req: {
+    params: { ticketId: string };
+    body: TicketMessages;
+    file?: Express.Multer.File;
+  },
   res: any
 ) => {
   try {
     const ticketId = req.params.ticketId;
 
-    const imageUrl = req.file ? `${process.env.BASE_URL}/uploads/${req.file.filename}` : ''; // or null, depending on your DB model
+    let imageUrl: string | undefined;
+
+    if (req.file) {
+      const imageFile = req.file;
+      const compressedFilename = path.parse(imageFile.filename).name + '.jpg';
+
+      await compressImage(imageFile.path, compressedFilename);
+
+      imageUrl = process.env.BASE_URL + '/uploads/images/' + compressedFilename;
+    }
 
     const data = {
       ...req.body,
-      image: imageUrl
+      ...(imageUrl && { image: imageUrl }) // only include image if exists
     };
 
     const result = await createTicketMessage(ticketId, data);

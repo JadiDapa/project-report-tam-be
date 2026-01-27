@@ -16,22 +16,28 @@ async function safeUnlink(filePath: string, retries = 5) {
 }
 
 export async function compressImage(inputPath: string, outputFilename: string) {
-  const outputPath = path.join('uploads/images', outputFilename);
+  // ✅ Make input absolute (fix: "missing uploads\\tmp\\..." because cwd can differ)
+  const absInput = path.isAbsolute(inputPath) ? inputPath : path.resolve(process.cwd(), inputPath);
 
-  await sharp(inputPath)
+  // ✅ Make output absolute + ensure directory exists
+  const outDir = path.resolve(process.cwd(), 'uploads', 'images');
+  await fs.mkdir(outDir, { recursive: true });
+
+  const absOutput = path.join(outDir, outputFilename);
+
+  // ✅ Fail early with a clearer error if input isn't there
+  await fs.access(absInput);
+
+  await sharp(absInput)
     .rotate()
-    .resize({
-      width: 1920,
-      withoutEnlargement: true
-    })
-    .jpeg({
-      quality: 80,
-      mozjpeg: true
-    })
-    .toFile(outputPath);
+    .resize({ width: 1920, withoutEnlargement: true })
+    .jpeg({ quality: 80, mozjpeg: true })
+    .toFile(absOutput);
 
-  // 🧠 Windows needs time to release the file handle
-  await safeUnlink(inputPath);
+  await safeUnlink(absInput);
 
-  return outputPath;
+  // Return something useful:
+  // - absOutput for server
+  // - or a relative path for building URLs
+  return absOutput;
 }

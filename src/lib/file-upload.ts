@@ -2,22 +2,23 @@ import path from 'path';
 import { promises as fs } from 'fs';
 
 export async function fileUpload(file: File, directory: string) {
-  // Get current datetime as a formatted string
-  const now = new Date();
-  const timestamp = now.toISOString().replace(/[:.]/g, '-'); // Replace colons and dots for a safe filename
-
-  // Extract the file extension
+  // 1. Timestamped filename
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const extension = path.extname(file.name);
-
-  // Create the new file name using datetime
   const newFileName = `${timestamp}${extension}`;
 
-  // Convert the image to a buffer
+  // 2. Absolute directory path
+  const uploadDir = path.join(process.cwd(), directory);
+
+  // 3. Ensure directory exists
+  await fs.mkdir(uploadDir, { recursive: true });
+
+  // 4. Convert file to buffer
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  // Save the image to the uploads folder with the new name
-  const pathname = path.join(process.cwd(), directory, newFileName);
-  await fs.writeFile(pathname, buffer);
+  // 5. Write file
+  const filePath = path.join(uploadDir, newFileName);
+  await fs.writeFile(filePath, buffer);
 
   return newFileName;
 }
